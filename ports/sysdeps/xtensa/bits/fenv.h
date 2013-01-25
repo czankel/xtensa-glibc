@@ -19,8 +19,6 @@
 # error "Never use <bits/fenv.h> directly; include <fenv.h> instead."
 #endif
 
-#define FE_ALL_EXCEPT 0
-
 /* Define bits representing exceptions in the FPU status word.  */
 enum
   {

@@ -1458,12 +1458,22 @@ UDItype __umulsidi3 (USItype, USItype);
    to expand builtin functions depending on what configuration features
    are available.  This avoids library calls when the operation can be
    performed in-line.  */
+#if __BYTE_ORDER == __BIG_ENDIAN
+struct DIstruct { SItype high, low; };
+#elif __BYTE_ORDER == __LITTLE_ENDIAN
+struct DIstruct { SItype low, high; };
+#else
+#error Unhandled endianity
+#endif
 #define umul_ppmm(w1, w0, u, v)						\
   do {									\
-    DWunion __w;							\
-    __w.ll = __builtin_umulsidi3 (u, v);				\
-    w1 = __w.s.high;							\
-    w0 = __w.s.low;							\
+    union {								\
+      DItype __ll;							\
+      struct DIstruct __i;						\
+    } __w;								\
+    __w.__ll = __builtin_umulsidi3 (u, v);				\
+    w1 = __w.__i.high;							\
+    w0 = __w.__i.low;							\
   } while (0)
 #define __umulsidi3(u, v)		__builtin_umulsidi3 (u, v)
 #define count_leading_zeros(COUNT, X)	((COUNT) = __builtin_clz (X))

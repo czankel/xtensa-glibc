@@ -912,7 +912,7 @@ else
 	$(LINK.o) -shared $(sysdep-LDFLAGS) $(rtld-LDFLAGS) $(LDFLAGS.so) \
 		  -x c /dev/null -o $@.so -Wl,--verbose -v 2>&1 \
 	| sed -n -f $< > $@.new
-	test -s $@.new
+	#test -s $@.new
 	rm -f $@.so
 endif
 	mv -f $@.new $@

@@ -33,8 +33,8 @@
    structure; the only difference is that 32-bit programs not
    using __USE_FILE_OFFSET64 only see the low 32 bits of some
    of the fields (specifically st_ino, st_size, and st_blocks).  */
-#define _STAT_VER_KERNEL	0
-#define _STAT_VER_LINUX		0
+#define _STAT_VER_KERNEL	1
+#define _STAT_VER_LINUX		3
 #define _STAT_VER		_STAT_VER_KERNEL
 
 /* Versions of the `xmknod' interface.  */

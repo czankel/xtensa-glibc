@@ -66,7 +66,7 @@ here:	_call0	0f\n\
 	.align	4\n\
 0:	sub	%0, a0, %2\n\
 	mov	a0, %1"
-	   : "=a" (addr), "=a" (tmp) : "a" (&here));
+	   : "=a" (addr), "=&a" (tmp) : "a" (&here));
 
   return addr - 3;
 }
