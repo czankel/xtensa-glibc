@@ -71,10 +71,6 @@ typedef struct
 {
   dtv_t *dtv;
   void *private;
-  int multiple_threads;
-#if 0
-  uintptr_t pointer_guard;
-#endif
 } tcbhead_t;
 
 /* This is the size of the initial TCB.  */

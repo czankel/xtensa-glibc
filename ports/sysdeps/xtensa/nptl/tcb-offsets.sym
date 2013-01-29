@@ -3,5 +3,3 @@
 
 PID				offsetof (struct pthread, pid)
 TID				offsetof (struct pthread, tid)
-MULTIPLE_THREADS_OFFSET		offsetof (tcbhead_t, multiple_threads)
-

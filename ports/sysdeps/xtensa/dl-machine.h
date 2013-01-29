@@ -344,7 +344,7 @@ elf_machine_rela (struct link_map *map, const ElfW(Rela) *reloc,
 // FIXME: TPREL
       value = reloc->r_addend;
       if (sym_map)
-	value += sym->st_value;
+	value += sym_map->l_addr + sym->st_value;
 
       if (r_info == R_XTENSA_GLOB_DAT || r_info == R_XTENSA_JMP_SLOT)
 	{
