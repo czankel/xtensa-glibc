@@ -50,20 +50,6 @@ typedef union dtv
 /* The TLS blocks start right aftger the TCB.  */
 # define TLS_DTV_AT_TP	1
 
-// FIXME: what's this?
-/* We use the multiple_threads field in the pthread struct */
-//# define TLS_MULTIPLE_THREADS_IN_TCB 1 
-
-/* We require TLS support in the tools.  */
-#define HAVE_TLS_SUPPORT                1
-#define HAVE_TLS_MODEL_ATTRIBUTE        1
-#define HAVE___THREAD                   1
-
-#if 0
-/* Signal that TLS support is available.  */
-#define USE_TLS	1
-#endif
-
 /* Get the thread descriptor definition.  */
 # include <nptl/descr.h>
 
@@ -140,16 +126,6 @@ typedef struct
    is not available.  */
 #define TLS_INIT_TP_EXPENSIVE 1
 
-#if 0
-/* Set the pointer guard field in the TCB head.  */
-# define THREAD_SET_POINTER_GUARD(value) \
-  THREAD_SETMEM (THREAD_SELF, header.pointer_guard, value)
-# define THREAD_COPY_POINTER_GUARD(descr) \
-  ((descr)->header.pointer_guard                                              \
-   = THREAD_GETMEM (THREAD_SELF, header.pointer_guard))
-#endif
-
-
 /* Get and set the global scope generation counter in struct pthread.  */
 #define THREAD_GSCOPE_FLAG_UNUSED 0
 #define THREAD_GSCOPE_FLAG_USED   1
@@ -170,6 +146,7 @@ typedef struct
       atomic_write_barrier ();						     \
     }									     \
   while (0)
+
 #define THREAD_GSCOPE_WAIT() \
   GL(dl_wait_lookup_done) ()
 

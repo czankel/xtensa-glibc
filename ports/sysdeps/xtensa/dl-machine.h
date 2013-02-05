@@ -25,6 +25,7 @@
 
 #include <sys/param.h>
 #include <tls.h>
+#include <dl-tlsdesc.h>
 
 
 /* Translate a processor specific dynamic tag to the index
@@ -294,6 +295,10 @@ cannot make segment writable for relocation"));
   got = (ElfW(Addr) *) D_PTR (l, l_info[DT_PLTGOT]);
   got[0] = rfunc;
 
+  // FIXME: might need to add a lazy resolver for tlsdesc
+  if (l->l_info[DT_TLSDESC_GOT] && lazy)
+    _dl_printf ("DT_TLSDESC_GOT not implemented\n");
+
   return lazy;
 }
 
@@ -333,7 +338,7 @@ elf_machine_rela (struct link_map *map, const ElfW(Rela) *reloc,
 	}
 #ifndef RTLD_BOOTSTRAP
       else
-	_dl_reloc_bad_type (map, r_info, 0);
+        _dl_reloc_bad_type (map, r_info, 0);
 #endif
     }
   else if (r_info != R_XTENSA_NONE)
@@ -341,19 +346,64 @@ elf_machine_rela (struct link_map *map, const ElfW(Rela) *reloc,
       struct link_map *sym_map = RESOLVE_MAP (&sym, version, r_info);
       ElfW(Addr) value;
 
-// FIXME: TPREL
       value = reloc->r_addend;
-      if (sym_map)
-	value += sym_map->l_addr + sym->st_value;
 
-      if (r_info == R_XTENSA_GLOB_DAT || r_info == R_XTENSA_JMP_SLOT)
-	{
-	  *reloc_addr = value;
-	}
 #ifndef RTLD_BOOTSTRAP
+      if (r_info == R_XTENSA_TLS_TPOFF)
+	{
+	  if (sym != NULL)
+	    {
+	      CHECK_STATIC_TLS (map, sym_map);
+	      *reloc_addr = sym->st_value + sym_map->l_tls_offset 
+		+ reloc->r_addend;
+	    }
+	}
+      else if (r_info == R_XTENSA_TLSDESC_FN)
+	{
+	  if (sym == NULL)
+	    *reloc_addr = _dl_tlsdesc_undefweak;
+	  else
+	    {
+# ifndef SHARED
+	      CHECK_STATIC_TLS (map, sym_map);
+# else
+	      if (!TRY_STATIC_TLS (map, sym_map))
+		*reloc_addr =_dl_tlsdesc_dynamic;
+	      else
+# endif
+		*reloc_addr =_dl_tlsdesc_return;
+	     }
+	}
+      else if (r_info == R_XTENSA_TLSDESC_ARG)
+	{
+	  if (sym != NULL)
+	    {
+# ifndef SHARED
+	      CHECK_STATIC_TLS (map, sym_map);
+# else
+	      if (!TRY_STATIC_TLS (map, sym_map))
+	      	*reloc_addr =
+		   _dl_make_tlsdesc_dynamic(sym_map, sym->st_value+*reloc_addr);
+	      else
+# endif
+		*reloc_addr += (void*)(sym->st_value - sym_map->l_tls_offset);
+	    }
+	}
       else
-	_dl_reloc_bad_type (map, r_info, 0);
 #endif
+	{
+	  if (sym_map)
+	    value += sym_map->l_addr + sym->st_value;
+
+	  if (r_info == R_XTENSA_GLOB_DAT || r_info == R_XTENSA_JMP_SLOT)
+	    {
+	      *reloc_addr = value;
+	    }
+#ifndef RTLD_BOOTSTRAP
+	  else
+	    _dl_reloc_bad_type (map, r_info, 0);
+#endif
+	}
     }
 }
 auto inline void __attribute__((always_inline))

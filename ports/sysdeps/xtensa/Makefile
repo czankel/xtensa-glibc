@@ -1,4 +1,4 @@
-# Copyright (C) 1993, 1994, 1996, 1997, 2002 Free Software Foundation, Inc.
+# Copyright (C) 1993 - 2013 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
 # The GNU C Library is free software; you can redistribute it and/or
@@ -23,4 +23,14 @@ endif
 ifeq ($(subdir),math)
 # Avoid a bug in gcc
 CFLAGS-s_copysignl.c += -mnobitfield
+endif
+
+ifeq ($(subdir),elf)
+sysdep-dl-routines += tlsdesc dl-tlsdesc
+sysdep_routines += tlsdesc dl-tlsdesc
+sysdep-rtld-routines += tlsdesc dl-tlsdesc
+endif
+
+ifeq ($(subdir),csu)
+gen-as-const-headers += tlsdesc.sym
 endif

@@ -2695,8 +2695,11 @@ typedef Elf32_Addr Elf32_Conflict;
 #define	R_XTENSA_OP0		8
 #define	R_XTENSA_OP1		9
 #define	R_XTENSA_OP2		10
+#define R_XTENSA_TLSDESC_FN	50
+#define R_XTENSA_TLSDESC_ARG	51
+#define R_XTENSA_TLS_TPOFF	53
 /* Keep this the last entry.  */
-#define	R_XTENSA_NUM		11
+#define	R_XTENSA_NUM		56
 
 
 /* CRIS relocations.  */
