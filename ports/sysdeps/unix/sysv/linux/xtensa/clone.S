@@ -21,6 +21,11 @@
 #include <sysdep.h>
 #define _ERRNO_H	1
 #include <bits/errno.h>
+#ifdef RESET_PID
+#include <tls.h>
+#endif
+#define __ASSEMBLY__
+#include <linux/sched.h>
 
 /* int clone(int (*fn)(void *arg), void *child_stack, int flags, void *arg,
                     a2                    a3               a4        a5
@@ -39,7 +44,7 @@ ENTRY (__clone)
 
 	/* a2 and a3 are candidates for destruction by system-call return
 	   parameters.  We don't need the stack pointer after the system
-	   call.  We trust that the kernel will preserve a7, a9, and a6. */
+	   call.  We trust that the kernel will preserve a6, a7 and a9. */
 
 	mov	a9, a5			/* save function argument */
 	mov	a5, a7
@@ -61,13 +66,31 @@ ENTRY (__clone)
 	/* fall through for parent */
 
 L(pseudo_end):
-	ret
+	retw
 
 L(einval):
 	movi	a2, -EINVAL
 	j	SYSCALL_ERROR_LABEL
 
 L(thread_start):
+
+#if CLONE_THREAD != 0x00010000 || CLONE_VM != 0x00000100
+# error invalid values for CLONE_THREAD or CLONE_VM
+#endif
+
+#ifdef RESET_PID
+	bbsi.l	a6, 16, L(skip_restore_pid)	/* CLONE_THREAD = 0x00010000 */
+	movi	a2, -1
+	bbsi	a6, 8, L(gotpid)		/* CLONE_VM     = 0x00000100 */
+	movi	a2, SYS_ify(getpid)
+	syscall
+L(gotpid):
+	rur	a3, threadptr
+	s32i	a2, a3, PID
+	s32i	a2, a3, TID
+L(skip_restore_pid):
+#endif
+
 	/* start child thread */
 	movi	a0, 0			/* terminate the stack frame */
 	mov	a6, a9			/* load up the 'arg' parameter */

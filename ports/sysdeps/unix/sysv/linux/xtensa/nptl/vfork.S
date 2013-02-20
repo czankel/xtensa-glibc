@@ -19,29 +19,37 @@
 
 /*
   Save the PID value, save 0x80000000 if PID was 0.
-  Registers a2, a3, and a6 are available 
+  Registers a2 and a3 are available; ar should return the PID and as threadptr
  */
 
-#define SAVE_PID							\
-	rur	a3, THREADPTR;						\
-	l32i	a2, a3, PID;						\
-	neg	a2, a2;							\
-	movi	a6, 0x80000000;						\
-	moveqz	a2, a2, a6;						\
-	s32i	a2, a3, PID;						\
+#define SAVE_PID(pid,tp,ar,as)						\
+	rur	tp, threadptr;						\
+	l32i	pid, tp, PID;						\
+	neg	ar, pid;						\
+	movi	as, 0x80000000;						\
+	moveqz	ar, as, ar;						\
+	s32i	ar, tp, PID;						\
 
 /*
   Restore the PID value, restore to 0 if saved value was 0x80000000
   Return value from the syscall is in a2. 
  */
-#define RESTORE_PID(ar)							\
-	beqz	a2, 1f;							\
-	rur	a3, THREADPTR;						\
-	l32i	a6, a3, PID;						\
-	movi	ar, 0x80000000;						\
-	sub	ar, a6, ar;						\
-	movnez	ar, a6, ar;						\
-	s32i	a6, a3, PID;						\
+#define RESTORE_PID(pid,tp,res)						\
+	beqz	res, 1f;						\
+	s32i	pid, tp, PID;						\
 1:
+
+/*
+  Special version for call12, where we don't have enough registers 
+  available to preserve the original PID.
+ */
+#define RESTORE_PID12(ar, as, at)					\
+	rur	as, threadptr;						\
+	l32i	ar, as, PID;						\
+	movi	at, 0x80000000;						\
+	sub	at, at, ar;						\
+	neg	ar, ar;							\
+	moveqz	ar, at, at;						\
+	s32i	ar, as, PID;
 
 #include <sysdeps/unix/sysv/linux/xtensa/vfork.S>

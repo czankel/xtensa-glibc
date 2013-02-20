@@ -19,6 +19,8 @@
 #include <sysdep.h>
 #define _SIGNAL_H
 #include <bits/signum.h>
+#define __ASSEMBLY__
+#include <linux/sched.h>
 
 
 /*
@@ -32,21 +34,11 @@
 
 */
 
-/*
-   The following are defined in linux/sched.h, which unfortunately
-   is not safe for inclusion in an assembly file.
- */
-
-
-#define CLONE_VM        0x00000100     /* set if VM shared between processes */
-#define CLONE_VFORK     0x00004000     /* set if the parent wants the child to
-					  wake it up on mm_release */
-
 #ifndef SAVE_PID
 #define SAVE_PID
 #endif
 #ifndef RESTORE_PID
-#define RESTORE_PID(x)
+#define RESTORE_PID
 #endif
 
 /*
@@ -75,7 +67,7 @@ ENTRY (__vfork)
 .L4:	mov	a12, a2
 	mov	a13, a3
 
-	SAVE_PID
+	SAVE_PID(a5,a15,a2,a3)
 
 	/* use syscall 'clone' and set new stack pointer to the same address */
 
@@ -85,7 +77,7 @@ ENTRY (__vfork)
 
         syscall
 
-	RESTORE_PID(a5)
+	RESTORE_PID(a5,a15,a2)
 
 	movi	a5, -4096
 
@@ -104,7 +96,7 @@ ENTRY (__vfork)
 	mov	a13, a3
 	mov	a14, a6
 
-	SAVE_PID
+	SAVE_PID(a9,a15,a2,a3)
 
 	movi	a2, SYS_ify(clone)
 	movi	a3, 0
@@ -112,7 +104,7 @@ ENTRY (__vfork)
 
 	syscall
 
-	RESTORE_PID(a9)
+	RESTORE_PID(a9,a15,a2)
 
 	movi	a9, -4096
 
@@ -133,7 +125,7 @@ ENTRY (__vfork)
 	mov	a13, a3
 	mov	a14, a6
 
-	SAVE_PID
+	SAVE_PID (a2,a3,a2,a6)
 
 	movi	a2, SYS_ify(clone)
 	movi	a3, 0
@@ -141,7 +133,7 @@ ENTRY (__vfork)
 
 	syscall
 
-	RESTORE_PID(a3)
+	RESTORE_PID12(a3,a6,a15)
 
 	mov	a3, a13
 	movi	a13, -4096

@@ -18,27 +18,27 @@
 #include <tls.h>
 
 /*
-  Save the PID value, save 0x80000000 if PID was 0.
-  Registers a2, a3, and a6 are available 
+  Save the PID value (save the negated value)
+  Registers a2, a3 are available, a14, a15 are preserved across
  */
-// FIXME: preserve origin threadptr across syscall, keep it in some reg
-#define SAVE_PID							\
-	rur	a3, THREADPTR;						\
-	l32i	a2, a3, PID;						\
-	neg	a2, a2;							\
-	s32i	a2, a3, PID;						\
+#define SAVE_PID(pid, tp, ar, as)					\
+	rur	tp, threadptr;						\
+	l32i	pid, tp, PID;						\
+	neg	ar, pid;						\
+	s32i	pid, tp, PID;						\
 
 /*
-  Restore the PID value, restore to 0 if saved value was 0x80000000
-  Return value from the syscall is in a2. 
+  Restore the PID value if we are back in the parent.
  */
-#define RESTORE_PID(ar)							\
-	beqz	a2, 1f;							\
-	rur	a3, THREADPTR;						\
-	l32i	a6, a3, PID;						\
-	movi	ar, 0x80000000;						\
-	sub	ar, a6, ar;						\
-	s32i	ar, a3, PID;						\
+#define RESTORE_PID(pid, tp, res)					\
+	beqz	res, 1f;						\
+	s32i	pid, tp, PID;						\
 1:
+
+#define RESTORE_PID12(ar, as, at)					\
+	rur	as, threadptr;						\
+	l32i	ar, as, PID;						\
+	neg	ar, ar;							\
+	s32i	ar, as, PID;
 
 #include <sysdeps/unix/sysv/linux/xtensa/vfork.S>

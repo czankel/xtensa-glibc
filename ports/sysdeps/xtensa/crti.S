@@ -66,6 +66,7 @@ _init:
 #if PREINIT_FUNCTION_WEAK
 	beqz	a8, 1f
 #endif
+	callx8	a8
 1:
 
 

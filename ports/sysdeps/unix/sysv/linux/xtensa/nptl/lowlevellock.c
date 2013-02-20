@@ -1,7 +1,6 @@
-/* low level locking for pthread library.  SPARC version.
-   Copyright (C) 2003, 2006, 2007 Free Software Foundation, Inc.
+/* low level locking for pthread library.  Generic futex-using version.
+   Copyright (C) 2003-2013 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
-   Contributed by Paul Mackerras <paulus@au.ibm.com>, 2003.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -14,16 +13,13 @@
    Lesser General Public License for more details.
 
    You should have received a copy of the GNU Lesser General Public
-   License along with the GNU C Library; if not, write to the Free
-   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
-   02111-1307 USA.  */
+   License along with the GNU C Library.  If not, see
+   <http://www.gnu.org/licenses/>.  */
 
 #include <errno.h>
 #include <sysdep.h>
 #include <lowlevellock.h>
 #include <sys/time.h>
-#include <tls.h>
-
 
 void
 __lll_lock_wait_private (int *futex)
@@ -34,7 +30,7 @@ __lll_lock_wait_private (int *futex)
       if (oldval != 0)
 	lll_futex_wait (futex, 2, LLL_PRIVATE);
     }
-  while (atomic_compare_and_exchange_val_acq (futex, 2, 0) != 0);
+  while (atomic_compare_and_exchange_bool_acq (futex, 2, 0) != 0);
 }
 
 
@@ -49,24 +45,29 @@ __lll_lock_wait (int *futex, int private)
       if (oldval != 0)
 	lll_futex_wait (futex, 2, private);
     }
-  while (atomic_compare_and_exchange_val_acq (futex, 2, 0) != 0);
+  while (atomic_compare_and_exchange_bool_acq (futex, 2, 0) != 0);
 }
 
 
 int
 __lll_timedlock_wait (int *futex, const struct timespec *abstime, int private)
 {
+  struct timespec rt;
+
   /* Reject invalid timeouts.  */
   if (abstime->tv_nsec < 0 || abstime->tv_nsec >= 1000000000)
     return EINVAL;
 
+  /* Upgrade the lock.  */
+  if (atomic_exchange_acq (futex, 2) == 0)
+    return 0;
+
   do
     {
       struct timeval tv;
-      struct timespec rt;
 
       /* Get the current time.  */
-      (void) gettimeofday (&tv, NULL);
+      (void) __gettimeofday (&tv, NULL);
 
       /* Compute relative timeout.  */
       rt.tv_sec = abstime->tv_sec - tv.tv_sec;
@@ -81,12 +82,10 @@ __lll_timedlock_wait (int *futex, const struct timespec *abstime, int private)
       if (rt.tv_sec < 0)
 	return ETIMEDOUT;
 
-      /* Wait.  */
-      int oldval = atomic_compare_and_exchange_val_acq (futex, 2, 1);
-      if (oldval != 0)
-	lll_futex_timed_wait (futex, 2, &rt, private);
+      // XYZ: Lost the lock to check whether it was private.
+      lll_futex_timed_wait (futex, 2, &rt, private);
     }
-  while (atomic_compare_and_exchange_val_acq (futex, 2, 0) != 0);
+  while (atomic_compare_and_exchange_bool_acq (futex, 2, 0) != 0);
 
   return 0;
 }
@@ -107,7 +106,7 @@ __lll_timedwait_tid (int *tidp, const struct timespec *abstime)
       struct timespec rt;
 
       /* Get the current time.  */
-      (void) gettimeofday (&tv, NULL);
+      (void) __gettimeofday (&tv, NULL);
 
       /* Compute relative timeout.  */
       rt.tv_sec = abstime->tv_sec - tv.tv_sec;
@@ -122,8 +121,8 @@ __lll_timedwait_tid (int *tidp, const struct timespec *abstime)
       if (rt.tv_sec < 0)
 	return ETIMEDOUT;
 
-      /* Wait until thread terminates.  The kernel so far does not use
-	 the private futex operations for this.  */
+      /* Wait until thread terminates.  */
+      // XYZ: Lost the lock to check whether it was private.
       if (lll_futex_timed_wait (tidp, tid, &rt, LLL_SHARED) == -ETIMEDOUT)
 	return ETIMEDOUT;
     }

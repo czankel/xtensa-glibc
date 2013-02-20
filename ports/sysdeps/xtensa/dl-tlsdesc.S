@@ -46,7 +46,7 @@ _dl_tlsdesc_return:
 _dl_tlsdesc_undefweak:
 	entry	a1, 16
 	l32i	a2, a2, 4
-	rur.THREADPTR	a3
+	rur.threadptr	a3
 	sub	a2, a2, a3
 	retw
 	.size	_dl_tlsdesc_undefweak, .-_dl_tlsdesc_undefweak
@@ -86,7 +86,7 @@ _dl_tlsdesc_dynamic:
 	l32i	a2, a2, TLSDESC_ARG
 	
 	/* dtv_t *dtv = (dtv_t *)THREAD_DTV(); */
-	rur.THREADPTR	a3 
+	rur.threadptr	a3 
 	l32i	a4, a3, 0
 
 	/* if (td->gen_count <= dtv[0].counter */
@@ -116,3 +116,37 @@ _dl_tlsdesc_dynamic:
 	.size	_dl_tlsdesc_dynamic, .-_dl_tlsdesc_dynamic
 
 #endif /* SHARED */
+
+	/* This function is a wrapper for the lazy resolver of TLS_DESC_RELA
+	   relocations. The argument points to the caller's link map....
+	   arg0 tlsdesc
+	   arg1 GOT
+
+_dl_fixup(struct link_map *l, ElfW(Word) reloc_arg)
+		
+	*/
+
+	.align 4
+	.hidden _dl_tlsdesc_resolve_rela
+	.global	_dl_tlsdesc_resolve_rela
+	.type	_dl_tlsdesc_resolve_rela, @function
+_dl_tlsdesc_resolve_rela:
+1:	j	1b
+
+#if 0
+	movi	a8, _dl_tlsdesc_resolve_rela_fixup
+	callx8	a8
+#endif
+
+        .align 4
+        .hidden _dl_tlsdesc_resolve_hold
+        .global _dl_tlsdesc_resolve_hold
+        .type   _dl_tlsdesc_resolve_hold, @function
+_dl_tlsdesc_resolve_hold:
+
+1:	j	1b
+
+
+
+
+

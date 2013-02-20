@@ -1458,9 +1458,9 @@ UDItype __umulsidi3 (USItype, USItype);
    to expand builtin functions depending on what configuration features
    are available.  This avoids library calls when the operation can be
    performed in-line.  */
-#if __BYTE_ORDER == __BIG_ENDIAN
+#if defined(__XTENSA_EB__)
 struct DIstruct { SItype high, low; };
-#elif __BYTE_ORDER == __LITTLE_ENDIAN
+#elif defined(__XTENSA_EL__)
 struct DIstruct { SItype low, high; };
 #else
 #error Unhandled endianity

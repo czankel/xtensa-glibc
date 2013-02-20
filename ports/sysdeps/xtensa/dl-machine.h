@@ -295,9 +295,9 @@ cannot make segment writable for relocation"));
   got = (ElfW(Addr) *) D_PTR (l, l_info[DT_PLTGOT]);
   got[0] = rfunc;
 
-  // FIXME: might need to add a lazy resolver for tlsdesc
-  if (l->l_info[DT_TLSDESC_GOT] && lazy)
-    _dl_printf ("DT_TLSDESC_GOT not implemented\n");
+  if (l->l_info[ADDRIDX (DT_TLSDESC_GOT)] && lazy)
+    *(Elf32_Addr*)(D_PTR (l, l_info[ADDRIDX (DT_TLSDESC_GOT)]) + l->l_addr) =
+	(Elf32_Addr) &_dl_tlsdesc_resolve_rela;
 
   return lazy;
 }
@@ -361,17 +361,17 @@ elf_machine_rela (struct link_map *map, const ElfW(Rela) *reloc,
       else if (r_info == R_XTENSA_TLSDESC_FN)
 	{
 	  if (sym == NULL)
-	    *reloc_addr = _dl_tlsdesc_undefweak;
+	    *reloc_addr = (ElfW(Addr)) _dl_tlsdesc_undefweak;
 	  else
 	    {
 # ifndef SHARED
 	      CHECK_STATIC_TLS (map, sym_map);
 # else
 	      if (!TRY_STATIC_TLS (map, sym_map))
-		*reloc_addr =_dl_tlsdesc_dynamic;
+		*reloc_addr = (ElfW(Addr)) _dl_tlsdesc_dynamic;
 	      else
 # endif
-		*reloc_addr =_dl_tlsdesc_return;
+		*reloc_addr = (ElfW(Addr)) _dl_tlsdesc_return;
 	     }
 	}
       else if (r_info == R_XTENSA_TLSDESC_ARG)
@@ -382,11 +382,11 @@ elf_machine_rela (struct link_map *map, const ElfW(Rela) *reloc,
 	      CHECK_STATIC_TLS (map, sym_map);
 # else
 	      if (!TRY_STATIC_TLS (map, sym_map))
-	      	*reloc_addr =
+	      	*reloc_addr = (ElfW(Addr))
 		   _dl_make_tlsdesc_dynamic(sym_map, sym->st_value+*reloc_addr);
 	      else
 # endif
-		*reloc_addr += (void*)(sym->st_value - sym_map->l_tls_offset);
+		*reloc_addr += sym->st_value - sym_map->l_tls_offset;
 	    }
 	}
       else

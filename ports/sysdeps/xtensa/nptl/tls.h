@@ -47,7 +47,7 @@ typedef union dtv
 /* Get system call information.  */
 # include <sysdep.h>
 
-/* The TLS blocks start right aftger the TCB.  */
+/* The TLS blocks start right after the TCB.  */
 # define TLS_DTV_AT_TP	1
 
 /* Get the thread descriptor definition.  */
@@ -105,7 +105,7 @@ typedef struct
 /* Return the thread descriptor for the current thread.  */
 # define THREAD_SELF							\
  ({ struct pthread *__self;						\
-    __asm__ ("rur %0, THREADPTR" : "=r" (__self));			\
+    __asm__ ("rur %0, threadptr" : "=r" (__self));			\
     __self - 1; })
 
 /* Magic for libthread_db to know how to do THREAD_SELF.  */
@@ -121,10 +121,6 @@ typedef struct
   descr->member = (value)
 #define THREAD_SETMEM_NC(descr, member, idx, value) \
   descr->member[idx] = (value)
-
-/* Initializing the thread pointer will generate a SIGILL if the syscall
-   is not available.  */
-#define TLS_INIT_TP_EXPENSIVE 1
 
 /* Get and set the global scope generation counter in struct pthread.  */
 #define THREAD_GSCOPE_FLAG_UNUSED 0

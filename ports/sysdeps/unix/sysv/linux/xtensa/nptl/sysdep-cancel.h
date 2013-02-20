@@ -88,7 +88,7 @@ extern int __local_multiple_threads attribute_hidden;
 			  header.multiple_threads) == 0, 1)
 #  else
 #   define SINGLE_THREAD_P(reg) \
-	rur reg, THREADPTR \
+	rur reg, threadptr \
 	l32i reg, reg, MULTIPLE_THREADS_OFFSET
 #  endif
 # endif
