@@ -1,5 +1,5 @@
 /* Startup code compliant to the ELF Xtensa ABI.
-   Copyright (C) 1995,1996,1997,1998,2000,2001 Free Software Foundation, Inc.
+   Copyright (C) 2001-2013 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -27,11 +27,11 @@
 		before this code runs.
 
    a1		The stack (i.e., a1+16) contains the arguments and environment:
-		0(%esp)			argc
-		4(%esp)			argv[0]
+		0(sp)			argc
+		4(sp)			argv[0]
 		...
-		(4*argc)(%esp)		NULL
-		(4*(argc+1))(%esp)	envp[0]
+		(4*argc)(sp)		NULL
+		(4*(argc+1))(sp)	envp[0]
 		...
 					NULL
 
@@ -52,7 +52,7 @@
 	.text
 	.globl _start
 _start:
-	/* Clear a0 to mark the outermost frame obviously.  */
+	/* Clear a0 to mark the outermost frame obvious.  */
 	movi	a0, 0
 
 	/* Load up the user's main function. */
@@ -65,8 +65,8 @@ _start:
 	addi	a8, a1, 4	/* Compute the argv pointer. */
 
 	/* Push address of our own entry points to .fini and .init.  */
-	movi	a9, _init
-	movi	a10, _fini
+	movi	a9, __libc_csu_init
+	movi	a10, __libc_csu_fini
 
 	/* Setup the shared library termination function. */
 	mov	a11, a2
