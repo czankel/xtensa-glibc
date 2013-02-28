@@ -1,7 +1,7 @@
 /* Machine-dependent pthreads configuration and inline functions.
    Xtensa Processor version
 
-   Copyright (C) 2001 Free Software Foundation, Inc.
+   Copyright (C) 2001-2013 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Based on the MIPS and PowerPC versions
 

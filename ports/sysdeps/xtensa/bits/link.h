@@ -1,4 +1,4 @@
-/* Copyright (C) 2012 Free Software Foundation, Inc.
+/* Copyright (C) 2012-2013 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Chris Zankel <chris@zankel.net>
 
@@ -37,17 +37,16 @@ typedef struct La_xtensa_retval
 __BEGIN_DECLS
 
 extern ElfW(Addr) la_xtensa_gnu_pltenter (ElfW(Sym) *__sym, unsigned int __ndx,
-                                        uintptr_t *__refcook,
-                                        uintptr_t *__defcook,
-                                        La_xtensa_regs *__regs,
-                                        unsigned int *__flags,
-                                        const char *__symname,
-                                        long int *__framesizep);
+					  uintptr_t *__refcook,
+					  uintptr_t *__defcook,
+					  La_xtensa_regs *__regs,
+					  unsigned int *__flags,
+					  const char *__symname,
+					  long int *__framesizep);
 extern unsigned int la_xtensa_gnu_pltexit (ElfW(Sym) *__sym, unsigned int __ndx,
-                                         uintptr_t *__refcook,
-                                         uintptr_t *__defcook,
-                                         const La_xtensa_regs *__inregs,
-                                         La_xtensa_retval *__outregs,
-                                         const char *__symname);
-
+					   uintptr_t *__refcook,
+					   uintptr_t *__defcook,
+					   const La_xtensa_regs *__inregs,
+					   La_xtensa_retval *__outregs,
+					   const char *__symname);
 __END_DECLS

@@ -1,6 +1,5 @@
-/* Copyright (C) 2012 Free Software Foundation, Inc.
+/* Copyright (C) 2012-2013 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
-   Contributed by Chris Zankel <chris@zankel.net>
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public

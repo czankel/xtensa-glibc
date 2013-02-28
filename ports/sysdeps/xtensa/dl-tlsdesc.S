@@ -146,7 +146,3 @@ _dl_tlsdesc_resolve_hold:
 
 1:	j	1b
 
-
-
-
-

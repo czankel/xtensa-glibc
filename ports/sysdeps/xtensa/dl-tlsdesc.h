@@ -31,7 +31,6 @@ struct tlsdesc
   ptrdiff_t (*entry)(struct tlsdesc *);
 };
 
-
 typedef struct dl_tls_index
 {
   unsigned long int ti_module;
