@@ -1,6 +1,6 @@
 /* Machine-dependent ELF dynamic relocation inline functions.
    Xtensa processor version.
-   Copyright (C) 2001 Free Software Foundation, Inc.
+   Copyright (C) 2001-2013 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -153,8 +153,8 @@ _dl_start_user:\n\
 	l32i	a6, a4, 0\n\
  	# call _dl_init (_rtld_local._dl_loaded, argc, argv, envp)\n\
 	addi	a8, sp, 4	# argv = sp+4\n\
-	slli	a9, a7, 2\n\
-	add	a9, a9, a8	# envp = argv + argc*4\n\
+	addi	a9, a7, 1\n\
+	addx4	a9, a9, a8	# envp = argv + (argc+1)*4\n\
 	movi	a4, _dl_init\n\
 	callx4	a4\n\
 	# pass finalizer (_dl_fini) in a2 to the user entry point\n\
