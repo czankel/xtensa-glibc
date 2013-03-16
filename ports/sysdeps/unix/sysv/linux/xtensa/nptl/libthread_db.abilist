@@ -1,8 +1,7 @@
-GLIBC_2.4
- GLIBC_2.4 A
+GLIBC_2.1.3
+ GLIBC_2.1.3 A
  td_init F
  td_log F
- td_symbol_list F
  td_ta_clear_event F
  td_ta_delete F
  td_ta_enable_stats F
@@ -36,7 +35,14 @@ GLIBC_2.4
  td_thr_setsigpending F
  td_thr_setxregs F
  td_thr_sigsetmask F
- td_thr_tls_get_addr F
- td_thr_tlsbase F
  td_thr_tsd F
  td_thr_validate F
+GLIBC_2.2.3
+ GLIBC_2.2.3 A
+ td_symbol_list F
+GLIBC_2.3
+ GLIBC_2.3 A
+ td_thr_tls_get_addr F
+GLIBC_2.3.3
+ GLIBC_2.3.3 A
+ td_thr_tlsbase F

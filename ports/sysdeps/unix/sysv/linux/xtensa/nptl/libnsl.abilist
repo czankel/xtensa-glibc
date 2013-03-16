@@ -1,5 +1,50 @@
-GLIBC_2.4
- GLIBC_2.4 A
+GLIBC_2.0
+ GLIBC_2.0 A
+ __yp_check F
+ xdr_domainname F
+ xdr_keydat F
+ xdr_mapname F
+ xdr_peername F
+ xdr_valdat F
+ xdr_yp_buf F
+ xdr_ypbind_binding F
+ xdr_ypbind_resp F
+ xdr_ypbind_resptype F
+ xdr_ypbind_setdom F
+ xdr_ypdelete_args F
+ xdr_ypmap_parms F
+ xdr_ypmaplist F
+ xdr_yppush_status F
+ xdr_yppushresp_xfr F
+ xdr_ypreq_key F
+ xdr_ypreq_nokey F
+ xdr_ypreq_xfr F
+ xdr_ypresp_all F
+ xdr_ypresp_key_val F
+ xdr_ypresp_maplist F
+ xdr_ypresp_master F
+ xdr_ypresp_order F
+ xdr_ypresp_val F
+ xdr_ypresp_xfr F
+ xdr_ypstat F
+ xdr_ypupdate_args F
+ xdr_ypxfrstat F
+ yp_all F
+ yp_bind F
+ yp_first F
+ yp_get_default_domain F
+ yp_maplist F
+ yp_master F
+ yp_match F
+ yp_next F
+ yp_order F
+ yp_unbind F
+ yp_update F
+ ypbinderr_string F
+ yperr_string F
+ ypprot_err F
+GLIBC_2.1
+ GLIBC_2.1 A
  __free_fdresult F
  __nis_default_access F
  __nis_default_group F
@@ -11,7 +56,6 @@ GLIBC_2.4
  __nisbind_create F
  __nisbind_destroy F
  __nisbind_next F
- __yp_check F
  nis_add F
  nis_add_entry F
  nis_addmember F
@@ -77,47 +121,7 @@ GLIBC_2.4
  readColdStartFile F
  writeColdStartFile F
  xdr_cback_data F
- xdr_domainname F
- xdr_keydat F
- xdr_mapname F
  xdr_obj_p F
- xdr_peername F
- xdr_valdat F
- xdr_yp_buf F
+GLIBC_2.2
+ GLIBC_2.2 A
  xdr_ypall F
- xdr_ypbind_binding F
- xdr_ypbind_resp F
- xdr_ypbind_resptype F
- xdr_ypbind_setdom F
- xdr_ypdelete_args F
- xdr_ypmap_parms F
- xdr_ypmaplist F
- xdr_yppush_status F
- xdr_yppushresp_xfr F
- xdr_ypreq_key F
- xdr_ypreq_nokey F
- xdr_ypreq_xfr F
- xdr_ypresp_all F
- xdr_ypresp_key_val F
- xdr_ypresp_maplist F
- xdr_ypresp_master F
- xdr_ypresp_order F
- xdr_ypresp_val F
- xdr_ypresp_xfr F
- xdr_ypstat F
- xdr_ypupdate_args F
- xdr_ypxfrstat F
- yp_all F
- yp_bind F
- yp_first F
- yp_get_default_domain F
- yp_maplist F
- yp_master F
- yp_match F
- yp_next F
- yp_order F
- yp_unbind F
- yp_update F
- ypbinderr_string F
- yperr_string F
- ypprot_err F
